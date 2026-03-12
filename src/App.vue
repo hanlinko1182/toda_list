@@ -8,7 +8,7 @@ const todos = ref([])
 const user = ref(null)
 const token = ref(null)
 
-const API_URL = 'https://api.render.com/deploy/srv-d6pfij5actks73eoq04g?key=6tACTPwAxS4'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
 // Fetch todos from backend
 const fetchTodos = async () => {

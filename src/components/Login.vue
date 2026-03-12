@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+
 const emit = defineEmits(['login'])
 
 const isLogin = ref(true)
@@ -18,10 +20,10 @@ const handleSubmit = async () => {
   error.value = ''
   isLoading.value = true
 
-  const endpoint = isLogin.value ? '/api/login' : '/api/register'
+  const endpoint = isLogin.value ? '/login' : '/register'
   
   try {
-    const response = await fetch(`http://localhost:3000${endpoint}`, {
+    const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username.value, password: password.value })
