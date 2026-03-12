@@ -8,7 +8,7 @@ const todos = ref([])
 const user = ref(null)
 const token = ref(null)
 
-const API_URL = 'http://localhost:3000/api'
+const API_URL = 'https://api.render.com/deploy/srv-d6pfij5actks73eoq04g?key=6tACTPwAxS4'
 
 // Fetch todos from backend
 const fetchTodos = async () => {
