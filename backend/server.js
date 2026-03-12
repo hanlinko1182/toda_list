@@ -15,28 +15,25 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
 let pool;
 
 async function initDb() {
-  // Connect without database first to create it
   try {
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
-    });
-
-    await connection.query("CREATE DATABASE IF NOT EXISTS vue_todo;");
-    await connection.end();
-
-    pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: 'vue_todo',
+    // Aiven အတွက် SSL setup ထည့်ပေးရပါမယ်
+    const dbConfig = {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME || 'defaultdb', // Aiven MySQL မှာ defaultdb လို့ အမည်ပေးထားတတ်ပါတယ်
+      port: process.env.DB_PORT || 18845,
       waitForConnections: true,
       connectionLimit: 10,
-      queueLimit: 0
-    });
+      queueLimit: 0,
+      ssl: {
+        rejectUnauthorized: false // Cloud DB အတွက် ဒါလေးက အရေးကြီးပါတယ်
+      }
+    };
 
-    // Create tables
+    pool = mysql.createPool(dbConfig);
+
+    // Table ဆောက်တဲ့အပိုင်း (ဒါကတော့ အလုပ်လုပ်ပါတယ်)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -57,9 +54,10 @@ async function initDb() {
 
     console.log("Database initialized successfully!");
   } catch (error) {
-    console.error("Failed to initialize database (Ensure MariaDB is running and credentials are correct). Error:", error.message);
+    console.error("Database connection failed:", error.message);
   }
 }
+
 
 initDb();
 
